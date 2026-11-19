@@ -1,4 +1,4 @@
-# not needed
+# manually tested
 
 import ollama
 

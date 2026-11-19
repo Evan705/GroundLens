@@ -1,4 +1,4 @@
-# not needed
+# manually tested
 from rag import retrieve_context, generate_answer
 
 # Define a question to test how the RAG application handles unsupported queries.
