@@ -33,7 +33,7 @@ def retrieve_context(question):
 
         "parental": "Parental Leave",
         "maternal": "Parental Leave",
-        "paternity": "Personal Leave",
+        "paternity": "Parental Leave",
 
         "work from home": "Work From Home",
         "remote": "Work From Home",
