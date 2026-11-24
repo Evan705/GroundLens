@@ -47,21 +47,18 @@ def retrieve_context(question):
 
     # Identify all matching policy sections.
     for keyword, section_name in keywords.items():
-
         if keyword in question:
-
             for section in sections:
-
                 if section.lower().startswith(section_name.lower()):
-
                     if section not in retrieved_sections:
                         retrieved_sections.append(section)
 
-    # Return all matching sections.
+    # Return all matching sections as a single string.
     if retrieved_sections:
-        return retrieved_sections
+        return "\n\n".join(retrieved_sections)
 
     return "No relevant information found in the document."
+
 
 # Generate an answer using the retrieved policy context and a local LLM.
 def generate_answer(question, context):
