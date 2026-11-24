@@ -3,7 +3,7 @@ import pytest
 from rag import retrieve_context, generate_answer
 from deepeval import assert_test
 from deepeval.test_case import LLMTestCase
-from deepeval.metrics import FaithfulnessMetric, AnswerRelevancyMetric
+from deepeval.metrics import FaithfulnessMetric, AnswerRelevancyMetric, ContextualRelevancyMetric,HallucinationMetric
 from deepeval.models import OllamaModel
 
 
@@ -30,6 +30,18 @@ relevancy_metric = AnswerRelevancyMetric(
     model=evaluator
 )
 
+contextual_relevancy = ContextualRelevancyMetric(
+    threshold=0.7,
+    model = evaluator,
+    include_reason=True
+)
+
+hallucination_metric = HallucinationMetric(
+    threshold=0.5,
+    model=evaluator,
+    include_reason=True
+)
+
 
 # Parameterize the test to execute the same evaluation
 # for multiple HR policy questions.
@@ -53,11 +65,12 @@ def test_leave_faithfulness(question):
     test_case = LLMTestCase(
         input=question,
         actual_output=answer,
-        retrieval_context=[str(context)]
+        retrieval_context=[str(context)],
+        context=[str(context)]
     )
 
     # Evaluate the generated answer using both configured metrics.
-    assert_test(test_case, [faithfulness, relevancy_metric])
+    assert_test(test_case, [faithfulness, relevancy_metric, contextual_relevancy,hallucination_metric])
 
     # Print details to help inspect the evaluation inputs and output.
     print("QUESTION:", question)

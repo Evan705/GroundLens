@@ -14,15 +14,13 @@ def load_document():
 
 
 # Retrieve the relevant policy section based on keywords in the question.
-def retrieve_context(question):
-    """Retrieve relevant HR policy information."""
 
-    # Load the document and split it into individual policy sections.
+def retrieve_context(question):
+    """Retrieve all relevant HR policy sections."""
+
     document = load_document()
     sections = document.split("\n\n")
 
-    # Map different question keywords to their corresponding policy sections.
-    # This uses keyword-based retrieval, not semantic or vector search.
     keywords = {
         "annual": "Annual Leave",
         "vacation": "Annual Leave",
@@ -43,21 +41,27 @@ def retrieve_context(question):
         "business trip": "Travel Policy"
     }
 
-    # Normalize the question to make keyword matching case-insensitive.
     question = question.lower().strip()
 
-    # Check whether any keyword matches the question.
+    retrieved_sections = []
+
+    # Identify all matching policy sections.
     for keyword, section_name in keywords.items():
+
         if keyword in question:
 
-            # Find and return the matching policy section.
             for section in sections:
+
                 if section.lower().startswith(section_name.lower()):
-                    return section
 
-    # Return a fallback message when no matching section is found.
+                    if section not in retrieved_sections:
+                        retrieved_sections.append(section)
+
+    # Return all matching sections.
+    if retrieved_sections:
+        return retrieved_sections
+
     return "No relevant information found in the document."
-
 
 # Generate an answer using the retrieved policy context and a local LLM.
 def generate_answer(question, context):

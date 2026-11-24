@@ -1,5 +1,8 @@
 
 from rag import retrieve_context
+from rag import generate_answer
+from deepeval.test_case import LLMTestCase
+from deepeval import assert_test
 
 # Verify that the correct annual leave information is retrieved.
 def test_annual_leave_retrieval():
@@ -60,8 +63,38 @@ def test_remote_work_retrieval():
     context = retrieve_context("Can I work remotely?")
     assert "3 days per week" in context
 
+    """Check whether expected text exists in retrieved context."""
 
-# Verify that "business trip" retrieves the travel policy.
-def test_business_trip_retrieval():
+    if isinstance(context, list):
+        context = " ".join(context)
+
+    assert expected_text.lower() in context.lower()
     context = retrieve_context("Do I need permission for a business trip?")
     assert "manager approval" in context
+
+    question = "What are the annual and sick leave entitlements?"
+
+    expected_answer = """
+    Employees are entitled to 20 days of annual leave
+    and 10 days of sick leave per year.
+    """
+
+    context = retrieve_context(question)
+
+    if isinstance(context, (list, tuple)):
+        retrieval_context = [str(item) for item in context]
+    else:
+        retrieval_context = [str(context)]
+
+    answer = generate_answer(question, context)
+
+    test_case = LLMTestCase(
+        input=question,
+        actual_output=answer,
+        expected_output=expected_answer,
+        retrieval_context=retrieval_context
+    )
+
+    assert_test(
+        test_case
+    )
